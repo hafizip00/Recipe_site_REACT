@@ -1,10 +1,16 @@
 import Veggie from "../componets/Veggie";
 import Populor from "../componets/Populor";
 import React from "react";
+import { motion } from "framer-motion";
 
 function Home() {
   return (
-    <div>
+    <motion.div
+      animate={{ opacity: 1 }}
+      initial={{ opacity: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <Populor
         url={`https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=9&tags=vegetarian`}
         localStorageprop={"veggie"}
@@ -15,7 +21,7 @@ function Home() {
         localStorageprop={"popular"}
         title={"Our Popular Picks"}
       />
-    </div>
+    </motion.div>
   );
 }
 

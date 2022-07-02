@@ -6,7 +6,6 @@ const Serached = () => {
   const [item, setItem] = useState([]);
 
   const params = useParams();
-  console.log(params.search);
   const getSearch = async (search) => {
     const data = await fetch(
       `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&query=${search}`
@@ -17,21 +16,25 @@ const Serached = () => {
   };
 
   useEffect(() => {
-    // getSearch(params.search);
+    getSearch(params.search);
   }, [params.search]);
 
   return (
     <Grid>
-      {item.map((i) => {
-        return (
-          <Link to={"/recipe/" + i.id}>
-            <Card>
-              <img src={i.image} />
-              <h4>{i.title}</h4>
-            </Card>
-          </Link>
-        );
-      })}
+      {item.length !== 0 ? (
+        item.map((i) => {
+          return (
+            <Link to={"/recipe/" + i.id}>
+              <Card>
+                <img src={i.image} />
+                <h4>{i.title}</h4>
+              </Card>
+            </Link>
+          );
+        })
+      ) : (
+        <h1 style={{ color: "red" }}>Item Not Found</h1>
+      )}
     </Grid>
   );
 };
