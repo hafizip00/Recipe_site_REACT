@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
+import { Link } from "react-router-dom";
 
-function Populor() {
+function Populor({ url, localStorageprop, title }) {
   const [popular, setPopular] = useState([]);
 
   const getPopular = async () => {
-    const response = await fetch(
-      `https://api.spoonacular.com/recipes/random?apiKey=${process.env.REACT_APP_API_KEY}&number=9`
-    );
-    const data = await response.json();
-    setPopular(data.recipes);
-    console.log(popular);
+    const check = localStorage.getItem(localStorageprop);
+
+    if (check) {
+      setPopular(JSON.parse(check));
+    } else {
+      const response = await fetch(url);
+      const data = await response.json();
+      localStorage.setItem(localStorageprop, JSON.stringify(data.recipes));
+      setPopular(data.recipes);
+    }
   };
   useEffect(() => {
     getPopular();
@@ -21,10 +26,10 @@ function Populor() {
   return (
     <div>
       <Wrapper>
-        <h3>Popular Picks</h3>
+        <h3>{title}</h3>
         <Splide
           options={{
-            perPage: 4,
+            perPage: 3,
             arrows: false,
             pagination: false,
             drag: "free",
@@ -33,12 +38,14 @@ function Populor() {
         >
           {popular.map((recipe) => {
             return (
-              <SplideSlide>
-                <Card>
-                  <p>{recipe.title}</p>
-                  <img src={recipe.image} alt={recipe.title} />
-                  <Gradient />
-                </Card>
+              <SplideSlide key={recipe.id}>
+                <Link to={"/recipe/" + recipe.id}>
+                  <Card>
+                    <p>{recipe.title}</p>
+                    <img src={recipe.image} alt={recipe.title} />
+                    <Gradient />
+                  </Card>
+                </Link>
               </SplideSlide>
             );
           })}
@@ -69,9 +76,9 @@ const Card = styled.div`
   }
   p {
     position: absolute;
-    z-index: 10px;
+    z-index: 100;
     left: 50%;
-    transform: translate(-50%, 0%);
+    transform: translate(-50%, 100%);
     color: white;
     width: 100%;
     text-align: center;
