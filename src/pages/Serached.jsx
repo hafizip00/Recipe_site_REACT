@@ -3,16 +3,18 @@ import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const Serached = () => {
-  const [item, setItem] = useState([]);
+  const [item, setItem] = useState([1]);
+  const [loading, setLoading] = useState(false);
 
   const params = useParams();
   const getSearch = async (search) => {
+    setLoading(true);
     const data = await fetch(
       `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&query=${search}`
     );
     const result = await data.json();
     setItem(result.results);
-    console.log(result.results);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -21,20 +23,18 @@ const Serached = () => {
 
   return (
     <Grid>
-      {item.length !== 0 ? (
-        item.map((i) => {
-          return (
-            <Link to={"/recipe/" + i.id}>
-              <Card>
-                <img src={i.image} />
-                <h4>{i.title}</h4>
-              </Card>
-            </Link>
-          );
-        })
-      ) : (
-        <h1 style={{ color: "red" }}>Item Not Found</h1>
-      )}
+      {loading && <h1>LOADING...</h1>}
+      {item.map((i) => {
+        return (
+          <Link to={"/recipe/" + i.id}>
+            <Card>
+              <img src={i.image} />
+              <h4>{i.title}</h4>
+            </Card>
+          </Link>
+        );
+      })}
+      {item.length === 0 && <h1>Item Not Found</h1>}
     </Grid>
   );
 };
